@@ -6,7 +6,7 @@
         <div v-if="!sidebar_opend" class="menue cursor-pointer font-bold text-xl " @click="OpenSideBar">
           <div>Menue</div>
           <div class="text-sm h-2 w-full bg-black">
-            {{getGlasses}} 
+            {{getGlasses}}
           </div>
         </div>
         <div v-else class="menue cursor-pointer font-bold text-xl " @click="OpenSideBar">X</div>
@@ -20,28 +20,30 @@
           <div class="flex hover:bg-black hover:text-white text-lg font-bold px-5 py-5 justify-between">
             SPECTACLES
             <div>></div>
-          
+
           </div>
-          
+
           <div v-if="spect_hovered" class="opacity-0 cursor-pointer group-hover:opacity-100 sub_menue">
             <div class=" d-men ">
-              <div @click="Change_Spect_to_Men" class="flex hover:bg-black hover:text-white text-lg font-bold px-5 py-5 justify-between">
+              <div @click="Change_Spect_to_Men"
+                class="flex hover:bg-black hover:text-white text-lg font-bold px-5 py-5 justify-between">
                 MEN
                 <div>></div>
               </div>
             </div>
 
             <div class=" d-men ">
-              <div @click="Change_Spect_to_Women" class="flex hover:bg-black hover:text-white text-lg font-bold px-5 py-5 justify-between">
+              <div @click="Change_Spect_to_Women"
+                class="flex hover:bg-black hover:text-white text-lg font-bold px-5 py-5 justify-between">
                 WOMEN
                 <div>></div>
               </div>
             </div>
           </div>
 
-          
+
         </div>
-        <div class="d-men group cursor-pointer"  @mouseover="glass_hovered= true" @mouseleave="glass_hovered = false">
+        <div class="d-men group cursor-pointer" @mouseover="glass_hovered= true" @mouseleave="glass_hovered = false">
           <div class="flex hover:bg-black hover:text-white text-lg font-bold  px-5 py-5 justify-between">
             SUNGLASES
             <div>></div>
@@ -93,13 +95,15 @@
       </div>
       <div class="flex font-bold">
         <div class="bor">
-          <div class=" px-10 pt-5 relative" @click="ColourMenue">COLOUR</div>
+          <div class=" px-10 pt-5 relative cursor-pointer" @click="ColourMenue">COLOR 
+           
+          </div>
 
 
         </div>
 
         <div class="bor">
-          <div class="px-10 pt-5" @click="ShapeMenue"> SHAPE</div>
+          <div class="px-10 pt-5 cursor-pointer" @click="ShapeMenue"> SHAPE</div>
         </div>
       </div>
     </div>
@@ -109,7 +113,7 @@
       <h1 class="mb-3">Colors</h1>
       <div class="flex text-serif text-lg">
         <label class="container">
-          <input v-model="colors.black" type="checkbox" >
+          <input v-model="colors.black" type="checkbox">
           <span class="checkmark"></span>
           black
         </label>
@@ -123,7 +127,7 @@
           colored
         </label>
         <label class="container">
-          <input  v-model="colors.crystal" type="checkbox">
+          <input v-model="colors.crystal" type="checkbox">
           <span class="checkmark"></span>
           crystal
         </label>
@@ -188,8 +192,8 @@
       </div> -->
 
 
-      <div  v-for="glass in filterd_glases.glasses" :key="glass.id" class="w-[33%] cards border-black h-[500px] bg-indigo-200"
-        :style="{
+      <div v-for="glass in filterd_glases.glasses" :key="glass.id"
+        class="w-[33%] cards border-black h-[500px] bg-indigo-200" :style="{
           'background-image': `url(${glass.glass_variants[0].media[0].url})`,
            width:'100%'
         }">
@@ -198,16 +202,20 @@
         <img :src="glass.glass_variants[0].media[0].url" alt="">
 
 
-      </div>
-
-
+      </div> 
+      
 
     </div>
 
-    <div v-else class=" grid  grid-cols-3 grid-rows-3 ">
+    <div v-else class=" grid  grid-cols-3 gap-4 grid-rows-3 ">
       <!-- ... -->
-
-      <h1>Loading .... </h1>
+      <SkeletonLoader/>
+      <SkeletonLoader/>
+      <SkeletonLoader/>
+      <SkeletonLoader/>
+      <SkeletonLoader/>
+      <SkeletonLoader/>
+     
 
     </div>
 
@@ -219,119 +227,104 @@
 
 <script>
 import axios from "axios";
+import SkeletonLoader from "../components/SkeletonLoader.vue";
 
 export default {
-  // Properties returned from data() become reactive state
-  // and will be exposed on `this`.
-  data() {
-    return {
-      glasses: {},
-      filterd_glases:{},
-      default_page:"women",
-      loading: false,
-      color_menue: false,
-      shape_menue: false,
-      sidebar_opend: false,
-      glass_hovered:false,
-      spect_hovered:false,
-
-      // Filter Variants
-      colors:{
-        black:false, 
-        tortoise:false, 
-        coloured:false, 
-        crystal:false,
-        dark:false,
-        bright:false
-      },
-      shapes:{
-        "square":false, 
-        "rectangle":false, 
-        "round": false,
-        "cateye":false
-      }
-    };
-  },
-  computed:{
-    getGlasses(){
-      let url = `https://api.bloobloom.com/user/v1/sales_channels/website/collections/spectacles-${this.default_page}/glasses?sort[type]=collection_relations_position&sort[order]=asc&filters[lens_variant_prescriptions][]=fashion&filters[lens_variant_types][]=classic&page[limit]=12&page[number]=1&filters[frame_variant_home_trial_available]=false`
-    
-       url =  url+(
-        this.colors.black == true ? "&filters[glass_variant_frame_variant_colour_tag_configuration_names][]=black" :''
-        )+(this.colors.tortoise == true ? "&filters[glass_variant_frame_variant_colour_tag_configuration_names][]=tortoise" :'')
-        +(this.colors.coloured == true ? "&filters[glass_variant_frame_variant_colour_tag_configuration_names][]=coloured" :'')
-        +(this.colors.crystal == true ? "&filters[glass_variant_frame_variant_colour_tag_configuration_names][]=crystal" :'')
-        +(this.colors.dark == true ? "&filters[glass_variant_frame_variant_colour_tag_configuration_names][]=dark" :'')
-        +(this.colors.bright == true ? "&filters[glass_variant_frame_variant_colour_tag_configuration_names][]=bright" :'')
-        +(this.shapes.square == true ? "&filters[glass_variant_frame_variant_frame_tag_configuration_names][]=square" :'')
-        +(this.shapes.rectangle == true ? "&filters[glass_variant_frame_variant_frame_tag_configuration_names][]=rectangle" :'')
-        +(this.shapes.round == true ? "&filters[glass_variant_frame_variant_frame_tag_configuration_names][]=round" :'')
-        +(this.shapes.cateye == true ? "&filters[glass_variant_frame_variant_frame_tag_configuration_names][]=cat-eye" :'')
-    
-        axios
-        .get(url)
-        .then((response) => {
-          this.loading = true
-        
-          console.log("filterd"+response.data);
-          
-          this.filterd_glases = response.data;
-          this.loading = false;
-        })
-        .catch((err) => {
-          console.log(err);
-          this.loading = false;
-        });
-
-      }
-
-  },
-
-  // Methods are functions that mutate state and trigger updates.
-  // They can be bound as event listeners in templates.
-  methods: {
-    LoadGlasses() {
-      const url =
-        "https://api.bloobloom.com/user/v1/sales_channels/website/collections/spectacles-women/glasses?width=960&sort%5Btype%5D=collection_relations_position&sort%5Border%5D=asc&filters%5Blens_variant_prescriptions%5D%5B%5D=fashion&filters%5Blens_variant_types%5D%5B%5D=classic&page%5Blimit%5D=12&page%5Bnumber%5D=2&filters%5Bframe_variant_home_trial_available%5D=false";
-      this.loading = true;
-
-      axios
-        .get(url)
-        .then((response) => {
-          console.log(response.data);
-          this.glasses = response.data;
-          this.loading = false;
-        })
-        .catch((err) => {
-          console.log(err);
-          this.loading = false;
-        });
+    // Properties returned from data() become reactive state
+    // and will be exposed on `this`.
+    data() {
+        return {
+            glasses: {},
+            filterd_glases: {},
+            default_page: "women",
+            loading: false,
+            color_menue: false,
+            shape_menue: false,
+            sidebar_opend: false,
+            glass_hovered: false,
+            spect_hovered: false,
+            // Filter Variants
+            colors: {
+                black: false,
+                tortoise: false,
+                coloured: false,
+                crystal: false,
+                dark: false,
+                bright: false
+            },
+            shapes: {
+                "square": false,
+                "rectangle": false,
+                "round": false,
+                "cateye": false
+            }
+        };
     },
-    ColourMenue() {
-      this.color_menue = !this.color_menue
+    computed: {
+        getGlasses() {
+            this.loading = true;
+            let url = `https://api.bloobloom.com/user/v1/sales_channels/website/collections/spectacles-${this.default_page}/glasses?sort[type]=collection_relations_position&sort[order]=asc&filters[lens_variant_prescriptions][]=fashion&filters[lens_variant_types][]=classic&page[limit]=12&page[number]=1&filters[frame_variant_home_trial_available]=false`;
+            url = url + (this.colors.black == true ? "&filters[glass_variant_frame_variant_colour_tag_configuration_names][]=black" : "") + (this.colors.tortoise == true ? "&filters[glass_variant_frame_variant_colour_tag_configuration_names][]=tortoise" : "")
+                + (this.colors.coloured == true ? "&filters[glass_variant_frame_variant_colour_tag_configuration_names][]=coloured" : "")
+                + (this.colors.crystal == true ? "&filters[glass_variant_frame_variant_colour_tag_configuration_names][]=crystal" : "")
+                + (this.colors.dark == true ? "&filters[glass_variant_frame_variant_colour_tag_configuration_names][]=dark" : "")
+                + (this.colors.bright == true ? "&filters[glass_variant_frame_variant_colour_tag_configuration_names][]=bright" : "")
+                + (this.shapes.square == true ? "&filters[glass_variant_frame_variant_frame_tag_configuration_names][]=square" : "")
+                + (this.shapes.rectangle == true ? "&filters[glass_variant_frame_variant_frame_tag_configuration_names][]=rectangle" : "")
+                + (this.shapes.round == true ? "&filters[glass_variant_frame_variant_frame_tag_configuration_names][]=round" : "")
+                + (this.shapes.cateye == true ? "&filters[glass_variant_frame_variant_frame_tag_configuration_names][]=cat-eye" : "");
+            axios
+                .get(url)
+                .then((response) => {
+                console.log("filterd" + response.data);
+                this.filterd_glases = response.data;
+                this.loading = false;
+            })
+                .catch((err) => {
+                console.log(err);
+                this.loading = false;
+            });
+        }
     },
-    ShapeMenue() {
-      this.shape_menue = !this.shape_menue
+    // Methods are functions that mutate state and trigger updates.
+    // They can be bound as event listeners in templates.
+    methods: {
+        LoadGlasses() {
+            const url = "https://api.bloobloom.com/user/v1/sales_channels/website/collections/spectacles-women/glasses?width=960&sort[type]=collection_relations_position&sort[order]=asc&filters[lens_variant_prescriptions][]=fashion&filters[lens_variant_types][]=classic&page[limit]=12&page[number]=2&filters[frame_variant_home_trial_available]=false";
+            this.loading = true;
+            axios
+                .get(url)
+                .then((response) => {
+                console.log(response.data);
+                this.glasses = response.data;
+                this.loading = false;
+            })
+                .catch((err) => {
+                console.log(err);
+                this.loading = false;
+            });
+        },
+        ColourMenue() {
+            this.color_menue = !this.color_menue;
+        },
+        ShapeMenue() {
+            this.shape_menue = !this.shape_menue;
+        },
+        OpenSideBar() {
+            this.sidebar_opend = !this.sidebar_opend;
+        },
+        Change_Spect_to_Men() {
+            this.default_page = "men";
+            this.sidebar_opend = false;
+            this.spect_hovered = false;
+        },
+        Change_Spect_to_Women() {
+            this.default_page = "women";
+            this.sidebar_opend = false;
+            this.spect_hovered = false;
+        }
     },
-    OpenSideBar() {
-      this.sidebar_opend = !this.sidebar_opend
-    },
-    Change_Spect_to_Men(){
-    this.default_page = "men"
-    this.sidebar_opend = false
-    this.spect_hovered = false
-    },
-    Change_Spect_to_Women(){
-    this.default_page = "women"
-    this.sidebar_opend = false
-    this.spect_hovered = false
-    }
-  },
-
-  // Lifecycle hooks are called at different stages
-  // of a component's lifecycle.
-  // This function will be called when the component is mounted.
- 
+    components: { SkeletonLoader }
 };
 </script>
 
@@ -359,15 +352,17 @@ export default {
   border-bottom: 1px solid rgb(102, 99, 99);
   font-family: serif;
 }
-.sub_menue{
+
+.sub_menue {
   position: fixed;
   height: 100%;
   width: 300px;
-  top:70px;
-  left:300px;
+  top: 70px;
+  left: 300px;
   background-color: #fff;
   transition: all 0.7s;
 }
+
 
 
 .color-options {
